@@ -1,6 +1,6 @@
 import  express  from "express";
 import {config} from "dotenv";
-
+import cors from "cors";
 //routes import
 import testrouter from "./Routes/Test.js";
 
@@ -14,6 +14,7 @@ const app=express();
 
 //middleware
 app.use(express.json());
+app.use(cors());
 
 
 //routes
