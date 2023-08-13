@@ -3,7 +3,7 @@ import {config} from "dotenv";
 import cors from "cors";
 //routes import
 import testrouter from "./Routes/Test.js";
-
+import apirouter from "./Routes/api-data.js"
 
 
 config({
@@ -19,6 +19,7 @@ app.use(cors());
 
 //routes
 app.use("/test",testrouter);
+app.use("/api/data",apirouter);
 
 
 export default app;
