@@ -4,7 +4,9 @@ import cors from "cors";
 //routes import
 import testrouter from "./Routes/Test.js";
 import apirouter from "./Routes/api-data.js"
+import regrouter from "./Routes/userRoute.js"
 
+import ErrorMiddleware from "./middleware/Error.js";
 
 config({
     path:"./Config/config.env"
@@ -20,6 +22,8 @@ app.use(cors());
 //routes
 app.use("/test",testrouter);
 app.use("/api/data",apirouter);
-
+app.use("/",regrouter)
 
 export default app;
+
+app.use(ErrorMiddleware)

@@ -80,9 +80,10 @@ router.get('/download/:year/:sem/:branch', (req, res) => {
 });
 
 //test router to check if button works
-router.get('/test', (req, res) => {
+router.post('/test', (req, res) => {
     console.log('hit')
-    res.send('test');
+    res.send('tests');
+    res.send("sdadad")
 });
 
 
