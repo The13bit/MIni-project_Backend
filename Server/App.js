@@ -5,6 +5,7 @@ import cors from "cors";
 import testrouter from "./Routes/Test.js";
 import apirouter from "./Routes/api-data.js"
 import regrouter from "./Routes/userRoute.js"
+import uploadroute from "./Routes/ProcessRoute.js"
 
 import ErrorMiddleware from "./middleware/Error.js";
 
@@ -22,7 +23,8 @@ app.use(cors());
 //routes
 app.use("/test",testrouter);
 app.use("/api/data",apirouter);
-app.use("/",regrouter)
+app.use("/api/data",regrouter)
+app.use("/api/data",uploadroute)
 
 export default app;
 
