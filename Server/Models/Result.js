@@ -20,8 +20,17 @@ const schema = new mongoose.Schema({
     type: String,
     
   },
+
+  Subject:{
+    type: String,
+
+  },
+  Marks:{
+    type: Number,
+    default:0
+  }
   
-    Maths_3:{
+    /*Maths_3:{
         type: Number,
         default:0
     }, 
@@ -46,6 +55,7 @@ const schema = new mongoose.Schema({
         type: Number,
         default:0
     }
+    */
   
 });
 

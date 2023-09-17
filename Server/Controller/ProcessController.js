@@ -32,6 +32,7 @@ export const uploaddataset = catchAsyncError(async (req, res, next) => {
           exam_type: arr.exam_type,
           sem: arr.sem,
           year: arr.year,
+          Subject: arr.Subject,
         });
         if (!duplicate) {
           Result.create(arr);
@@ -52,7 +53,9 @@ export const deletcollection = catchAsyncError(async (req, res, next) => {
 });
 
 export const getallresults = catchAsyncError(async (req, res, next) => {
-  const results = await Result.find({});
+  const { year, sem, branch } = req.body;
+  console.log(year, sem, branch);
+  const results = await Result.find({year:year,sem:sem,branch:branch});
   res.json({ success: true, results });
 });
 
@@ -78,7 +81,7 @@ export const Resultprocess = catchAsyncError(async (req, res, next) => {
     "DSGT",
     "DLCOA",
   ];
-
+  console.log(results);
   res.send(results);
 
   //const csv = json2csv.parse(results, { fields });
@@ -102,4 +105,25 @@ export const Resultprocess = catchAsyncError(async (req, res, next) => {
   //fs.unlinkSync(tempFilePath);
   //
   //res.send(data);
+});
+
+export const UpdateOptions = catchAsyncError(async (req, res, next) => {
+  const uniqueYears = await Result.aggregate([
+    {
+      $group: {
+        _id: {year:"$year",branch:"$branch",sem:"$sem"},
+        
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        year: "$_id.year",
+        branch:"$_id.branch",
+        sem:"$_id.sem",
+        count: 1
+      }
+    }
+  ]);
+  res.send(uniqueYears);
 });
