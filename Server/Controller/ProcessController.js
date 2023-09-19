@@ -127,3 +127,7 @@ export const UpdateOptions = catchAsyncError(async (req, res, next) => {
   ]);
   res.send(uniqueYears);
 });
+
+export const authcheck=catchAsyncError(async(req,res,next)=>{
+  res.send({success:true,message:"Authenticated"})
+})

@@ -1,5 +1,5 @@
 import express from 'express';
-import { Resultprocess, UpdateOptions, deletcollection, getallresults, uploaddataset } from '../Controller/ProcessController.js';
+import { Resultprocess, UpdateOptions, authcheck, deletcollection, getallresults, uploaddataset } from '../Controller/ProcessController.js';
 import singleupload from '../middleware/Multer.js';
 import { auth, authorizeadmin } from '../middleware/Auth.js';
 
@@ -15,5 +15,7 @@ router.route("/Results").post(getallresults);
 router.route("/ResultProcess").post(Resultprocess)
 
 router.route("/UpdateOptions").get(UpdateOptions)
+
+router.route("/auth_check").get(auth,authcheck)
 
 export default router;
