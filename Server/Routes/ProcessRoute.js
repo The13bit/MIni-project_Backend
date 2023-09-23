@@ -1,5 +1,5 @@
 import express from 'express';
-import { Resultprocess, UpdateOptions, authcheck, deletcollection, getallresults, uploaddataset } from '../Controller/ProcessController.js';
+import { Allres, Resultprocess, UpdateOptions, authcheck, deletcollection, getallresults, uploaddataset } from '../Controller/ProcessController.js';
 import singleupload from '../middleware/Multer.js';
 import { auth, authorizeadmin } from '../middleware/Auth.js';
 
@@ -11,6 +11,8 @@ const router = express.Router();
 router.route("/upload").post(auth,singleupload,uploaddataset).get(deletcollection);
 
 router.route("/Results").post(getallresults);
+
+router.route("/Getall").get(Allres);
 
 router.route("/ResultProcess").post(Resultprocess)
 

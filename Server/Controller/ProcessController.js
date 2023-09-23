@@ -10,6 +10,7 @@ import json2csv from "json2csv";
 import { PythonShell } from "python-shell";
 import path from "path";
 import { fileURLToPath } from "url";
+import xlsx from "xlsx";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,30 +22,40 @@ export const uploaddataset = catchAsyncError(async (req, res, next) => {
   }
   const fileuri = getDataUri(file);
 
-  const decoded_file = Buffer.from(fileuri.base64, "base64").toString("utf-8");
-
-  await csvtojson()
-    .fromString(decoded_file)
-    .then(async (json) => {
-      for (const arr of json) {
-        const duplicate = await Result.findOne({
-          xie_id: arr.xie_id,
-          exam_type: arr.exam_type,
-          sem: arr.sem,
-          year: arr.year,
-          Subject: arr.Subject,
-        });
-        if (!duplicate) {
-          Result.create(arr);
-        } else {
-          console.log(` ${JSON.stringify(arr)} already exists`);
-          continue;
-        }
-      }
-    })
-    .then(
-      res.json({ success: true, message: "Collection uploaded successfully" })
+  let json;
+  if (file.mimetype === "text/csv") {
+    const decoded_file = Buffer.from(fileuri.base64, "base64").toString(
+      "utf-8"
     );
+    json = await csvtojson().fromString(decoded_file);
+  } else if (
+    file.mimetype ===
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  ) {
+    const workbook = xlsx.read(fileuri.base64, { type: "base64" });
+    const sheet_name_list = workbook.SheetNames;
+    json = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+  } else {
+    return next(new ErrorHandler("Unsupported file type", 400));
+  }
+
+  for (const arr of json) {
+    const duplicate = await Result.findOne({
+      xie_id: arr.xie_id,
+      exam_type: arr.exam_type,
+      sem: arr.sem,
+      year: arr.year,
+      Subject: arr.Subject,
+    });
+    if (!duplicate) {
+      Result.create(arr);
+    } else {
+      console.log(` ${JSON.stringify(arr)} already exists`);
+      continue;
+    }
+  }
+
+  res.json({ success: true, message: "Collection uploaded successfully" });
 });
 
 export const deletcollection = catchAsyncError(async (req, res, next) => {
@@ -55,8 +66,13 @@ export const deletcollection = catchAsyncError(async (req, res, next) => {
 export const getallresults = catchAsyncError(async (req, res, next) => {
   const { year, sem, branch } = req.body;
   console.log(year, sem, branch);
-  const results = await Result.find({year:year,sem:sem,branch:branch});
+  const results = await Result.find({ year: year, sem: sem, branch: branch });
   res.json({ success: true, results });
+});
+
+export const Allres = catchAsyncError(async (req, res, next) => {
+  const results = await Result.find({});
+  res.json(results);
 });
 
 export const Resultprocess = catchAsyncError(async (req, res, next) => {
@@ -111,23 +127,22 @@ export const UpdateOptions = catchAsyncError(async (req, res, next) => {
   const uniqueYears = await Result.aggregate([
     {
       $group: {
-        _id: {year:"$year",branch:"$branch",sem:"$sem"},
-        
+        _id: { year: "$year", branch: "$branch", sem: "$sem" },
       },
     },
     {
       $project: {
         _id: 0,
         year: "$_id.year",
-        branch:"$_id.branch",
-        sem:"$_id.sem",
-        count: 1
-      }
-    }
+        branch: "$_id.branch",
+        sem: "$_id.sem",
+        count: 1,
+      },
+    },
   ]);
   res.send(uniqueYears);
 });
 
-export const authcheck=catchAsyncError(async(req,res,next)=>{
-  res.send({success:true,message:"Authenticated"})
-})
+export const authcheck = catchAsyncError(async (req, res, next) => {
+  res.send({ success: true, message: "Authenticated" });
+});
