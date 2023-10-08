@@ -8,7 +8,7 @@ import { auth, authorizeadmin } from '../middleware/Auth.js';
 const router = express.Router();
 
 
-router.route("/upload").post(auth,singleupload,uploaddataset).get(deletcollection);
+router.route("/upload").post(singleupload,uploaddataset).get(deletcollection);
 
 router.route("/Results").post(getallresults);
 
@@ -18,6 +18,6 @@ router.route("/ResultProcess").post(Resultprocess)
 
 router.route("/UpdateOptions").get(UpdateOptions)
 
-router.route("/auth_check").get(auth,authcheck)
+router.route("/auth_check").get(authcheck)
 
 export default router;
